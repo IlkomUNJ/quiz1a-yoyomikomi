@@ -1,5 +1,3 @@
-#pragma once
-
 #include "buyer.h"
 #include "seller.h"
 #include "bank_customer.h"
