@@ -1,10 +1,18 @@
 #include <iostream>
 #include "bank_customer.h"
 #include "buyer.h"
+#include "admin.h"
 
 enum PrimaryPrompt{LOGIN, REGISTER, EXIT, ADMIN_LOGIN};
 enum RegisterPrompt{CREATE_BUYER, CREATE_SELLER, BACK};
+enum BuyerPrompt{CHECK_ACCOUNT_STATUS, UPGRADE_TO_SELLER, CREATE_BANKING_ACCOUNT, BROWSE_STORE, ORDER, PAYMENT, LOGOUT, DELETE_ACCOUNT };
+enum SellerPrompt {CHECK_INVENTORY, ADD_ITEM_TO_INVENTORY, REMOVE_ITEM_FROM_INVENTORY, VIEW_ORDERS, EXIT_TO_MAIN_MENU, EXIT_PROGRAM};   
+enum AdminPrompt {VIEW_ALL_USERS = 1,VIEW_USER_DETAILS,SEARCH_USER,CREATE_USER,REMOVE_USER,BACK_TO_MAIN};
 using namespace std;
+
+vector<Buyer> buyers;
+vector<seller> sellers;
+vector<BankCustomer> bankAccounts;
 
 int main() {
     //create a loop prompt 
@@ -12,6 +20,7 @@ int main() {
     RegisterPrompt regPrompt = CREATE_BUYER;
     const string ADMIN_USERNAME = "root";
     const string ADMIN_PASSWORD = "toor";
+
     string username, password;
 
     while (prompt != EXIT) {
@@ -26,6 +35,53 @@ int main() {
         switch (prompt) {
             case LOGIN:
                 cout << "Login selected." << endl;
+                BuyerPrompt buyerPrompt = CHECK_ACCOUNT_STATUS;
+                while(buyerPrompt != LOGOUT){
+                    cout << "Select an option: " << endl;
+                    cout << "1. Check Account Status" << endl;
+                    cout << "2. Upgrade Account to Seller" << endl;
+                    cout << "3. Create Banking Account" << endl;
+                    cout << "4. Browse Store" << endl;
+                    cout << "5. Order" << endl;
+                    cout << "6. Payment" << endl;
+                    cout << "7. Logout" << endl;
+                    cout << "8. Delete Account" << endl;
+                    int buyerChoice;
+                    cin >> buyerChoice;
+                    buyerPrompt = static_cast<BuyerPrompt>(buyerChoice - 1);
+
+                    switch(buyerPrompt){
+                    case CHECK_ACCOUNT_STATUS:
+                        cout<<"Checking account status...\n";
+                        break;
+                    case UPGRADE_TO_SELLER:
+                        cout<<"Upgrading to seller...\n";
+                        break;
+                    case CREATE_BANKING_ACCOUNT:
+                        cout<<"Creating banking account...\n";
+                        break;
+                    case BROWSE_STORE:
+                        cout<<"Browsing store...\n";
+                        break;
+                    case ORDER:
+                        cout<<"Ordering...\n";
+                        break;
+                    case PAYMENT:
+                        cout<<"Payment...\n";
+                        break;
+                    case LOGOUT:
+                        cout<<"Logging out...\n";
+                        break;
+                    case DELETE_ACCOUNT:
+                        cout<<"Deleting account...\n";
+                        break;
+                    default:
+                        cout<<"Invalid choice.\n";
+                        break;
+                    }
+                }
+                
+
                 /* if Login is selected, based on authority then provide options:
                 assume user is logged in as Buyer for now
                 1. Chek Account Status (will display if user is Buyer or Seller or both and linked banking account status)
@@ -65,7 +121,45 @@ int main() {
                 Display confirmation dialogue
                 If confirmed, delete account and return to main menu
                 If not, return to Buyer menu
+                */
+                SellerPrompt sellerPrompt = CHECK_INVENTORY;
+                while (sellerPrompt != EXIT_TO_MAIN_MENU && sellerPrompt != EXIT_PROGRAM){
+                    cout << "Select an option: " << endl;
+                    cout << "9. Check Inventory" << endl;
+                    cout << "10. Add Item to Inventory" << endl;
+                    cout << "11. Remove Item from Inventory" << endl;
+                    cout << "12. View Orders" << endl;
+                    cout << "13. Exit to Main Menu" << endl;
+                    cout << "14. Exit Program" << endl;
+                    int sellerChoice;
+                    cin >> sellerChoice;
+                    sellerPrompt = static_cast<SellerPrompt>(sellerChoice - 1);
 
+                    switch(sellerPrompt){
+                        case CHECK_INVENTORY:
+                            cout<<"Checking inventory...\n";
+                            break;
+                        case ADD_ITEM_TO_INVENTORY:
+                            cout<<"Adding item to inventory...\n";
+                            break;
+                        case REMOVE_ITEM_FROM_INVENTORY:
+                            cout<<"Removing item from inventory...\n";
+                            break;
+                        case VIEW_ORDERS:
+                            cout<<"Viewing orders...\n";
+                            break;
+                        case EXIT_TO_MAIN_MENU:
+                            cout<<"Exiting to main menu...\n";
+                            break;
+                        case EXIT_PROGRAM:
+                            exit(0);
+                            break;
+                        default:
+                            cout<<"Invalid choice.\n";
+                            break;
+                    }
+                }
+               /*
                 assume user is logged in as Seller for now
                 9. Check Inventory
                 10. Add Item to Inventory
@@ -123,6 +217,48 @@ int main() {
                 cin >> username;
                 cout << "Password: ";
                 cin >> password;
+                Admin admin;
+                bool adminActive = true;
+
+                while (adminActive) {
+                    std::cout << "=== Admin Menu ===\n";
+                    std::cout << "1. View All Buyers and Sellers\n";
+                    std::cout << "2. View Details of Buyers and Sellers\n";
+                    std::cout << "3. Search Buyer/Seller\n";
+                    std::cout << "4. Create Buyer/Seller/Bank Account\n";
+                    std::cout << "5. Remove Buyer/Seller by ID\n";
+                    std::cout << "6. Back to Main Menu\n";
+
+                    int choice;
+                    std::cin >> choice;
+                    AdminPrompt adminPrompt = static_cast<AdminPrompt>(choice);
+
+                    switch (adminPrompt) {
+                        case VIEW_ALL_USERS:
+                            admin.viewAllUsers(buyers, sellers);
+                            break;
+                        case VIEW_USER_DETAILS:
+                            admin.viewUserDetails(buyers, sellers);
+                            break;
+                        case SEARCH_USER:
+                            admin.searchUser(buyers, sellers);
+                            break;
+                        case CREATE_USER:
+                            admin.createUser(buyers, sellers, bankAccounts);
+                            break;
+                        case REMOVE_USER:
+                            admin.removeUserById(buyers, sellers, bankAccounts);
+                            break;
+                        case BACK_TO_MAIN:
+                            adminActive = false;
+                            break;
+                        default:
+                            std::cout << "Invalid option.\n";
+                            break;
+                    }
+
+                    std::cout << std::endl;
+                }
                 /** After login create a sub prompt that provides the following features
                 1. Account Management
                     - View All Buyers, Sellers

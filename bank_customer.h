@@ -17,6 +17,7 @@ public:
         this->name = name;
         this->balance = balance;
     }
+    void printInfo() const;
 
     int getId() const;
     string getName() const;

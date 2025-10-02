@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <string>
 #include "bank_customer.h"
+#include <vector>
+#include "seller.h"
 
 using namespace std;
 
@@ -19,10 +21,14 @@ public:
 
     int getId() const { return id; }
     string getName() const { return name; }
-    BankCustomer& getAccount() { return account; }
+    const BankCustomer& getAccount() const {return account;}
 
     void setId(int newId) { id = newId; }
     void setName(const std::string& newName) { name = newName; }
+
+    void checkAccountStatus(const vector<seller> &sellers) const;
+    void upgradeToSeller(Buyer&buyer);
+    void createBankingAccount(int id, const string&name, double initialDeposit);
 };
 
 #endif // BUYER_H
